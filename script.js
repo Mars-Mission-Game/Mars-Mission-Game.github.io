@@ -1,5 +1,5 @@
 /* =========================================
-    نافذة How To Play
+   نافذة How To Play
    ========================================= */
 const howBtn = document.getElementById('how-button');
 const modal = document.getElementById('how-to-play-modal');
@@ -24,14 +24,13 @@ window.addEventListener('click', (event) => {
 });
 
 /* =========================================
-    إعدادات اللعبة
+   إعدادات اللعبة
    ========================================= */
 const DAYS_PER_LEVEL = 10;
 const EVENTS_PER_DAY = 2;
 const START_STATE = { oxygen: 80, power: 65, food: 70, radiation: 20 };
 const ICONS = { oxygen: '💨', power: '⚡', food: '🍎', radiation: '☢️' };
 
-// المستويات: daily = الاستهلاك اليومي، good = ضرب المكاسب، bad = ضرب الخسائر
 // ===== أسئلة المستوى السهل (10) =====
 const EASY_EVENTS = [
     {
@@ -317,13 +316,13 @@ const HARD_EVENTS = [
 // المستويات: كل مستوى له أسئلته الخاصة (events)
 // daily = الاستهلاك اليومي، good = ضرب المكاسب، bad = ضرب الخسائر
 const LEVELS = [
-    { name: 'EASY', events: EASY_EVENTS, daily: { oxygen: -6, power: -4, food: -5, radiation: -2 }, good: 1, bad: 1 },
+    { name: 'EASY',   events: EASY_EVENTS,   daily: { oxygen: -6, power: -4, food: -5, radiation: -2 }, good: 1,   bad: 1 },
     { name: 'MEDIUM', events: MEDIUM_EVENTS, daily: { oxygen: -7, power: -5, food: -6, radiation: -1 }, good: 0.9, bad: 1.2 },
-    { name: 'HARD', events: HARD_EVENTS, daily: { oxygen: -8, power: -6, food: -7, radiation: 0 }, good: 0.8, bad: 1.4 }
+    { name: 'HARD',   events: HARD_EVENTS,   daily: { oxygen: -8, power: -6, food: -7, radiation: 0 },  good: 0.8, bad: 1.4 }
 ];
 
 /* =========================================
-    العناصر
+   العناصر
    ========================================= */
 const startBtn = document.getElementById('start-button');
 const gameScreen = document.getElementById('game-screen');
@@ -350,7 +349,7 @@ const levelName = document.getElementById('level-name');
 const crewMembers = document.querySelectorAll('#crew-icons .crew-member');
 
 /* =========================================
-    الحالة
+   الحالة
    ========================================= */
 let state = null;
 let eventPool = [];
@@ -369,6 +368,7 @@ function shuffle(arr) {
     return a;
 }
 
+// بيختار حدث عشوائي من أسئلة المستوى الحالي، من غير تكرار لحد ما كلها تخلص
 function nextEvent() {
     if (eventPool.length === 0) {
         eventPool = shuffle(LEVELS[state.level].events);
@@ -394,7 +394,7 @@ function showScreen(screen) {
 }
 
 /* =========================================
-    تحديث الواجهة
+   تحديث الواجهة
    ========================================= */
 function render() {
     dayCount.textContent = state.day;
@@ -416,7 +416,7 @@ function render() {
 }
 
 /* =========================================
-    سير اللعبة
+   سير اللعبة
    ========================================= */
 function startGame() {
     state = { level: 0, day: 1, q: 1, crew: 4, ...START_STATE };
@@ -527,7 +527,7 @@ function endDay() {
 }
 
 /* =========================================
-    المستويات والنهاية
+   المستويات والنهاية
    ========================================= */
 // نهاية مستوى: لو لسه فيه مستوى بعده، نعرض صفحة الانتقال
 function finishLevel() {
@@ -578,7 +578,7 @@ function winGame() {
 }
 
 /* =========================================
-    الأزرار
+   الأزرار
    ========================================= */
 startBtn.addEventListener('click', startGame);
 nextDayBtn.addEventListener('click', endDay);
