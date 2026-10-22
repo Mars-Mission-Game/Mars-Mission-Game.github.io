@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mars Mission</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1 class="Home-title">MARS MISSION</h1>
+    <p class="Welcome-message">Welcome Captain!</p>
+    <img src="images/Home.png" alt="Mars">
+    <button id="start-button">Start Mission →</button>
+    <button id="how-button">How To play</button>
+
+    <!-- ===== نافذة How To Play ===== -->
+        <!-- ===== نافذة How To Play ===== -->
+    <div id="how-to-play-modal" class="modal">
+        <div class="modal-content howto-card">
+            <p class="howto-kicker">MARS MISSION</p>
+            <h2 class="howto-title">HOW TO PLAY</h2>
+            <p class="howto-sub">Your mission is to keep your crew alive on Mars!</p>
+
+            <div class="howto-list">
+                <div class="howto-row oxygen">
+                    <div class="howto-icon">💨</div>
+                    <div class="howto-main">
+                        <h3>OXYGEN</h3>
+                        <p>Keep enough oxygen for your crew.</p>
+                    </div>
+                    <div class="howto-warn">If oxygen runs out, your crew will suffocate and the mission will fail.</div>
+                </div>
+
+                <div class="howto-row power">
+                    <div class="howto-icon">⚡</div>
+                    <div class="howto-main">
+                        <h3>POWER</h3>
+                        <p>Manage your energy carefully.</p>
+                    </div>
+                    <div class="howto-warn">Without power, life support stops working and the mission will fail.</div>
+                </div>
+
+                <div class="howto-row food">
+                    <div class="howto-icon">🍎</div>
+                    <div class="howto-main">
+                        <h3>FOOD</h3>
+                        <p>Make sure your crew has enough food.</p>
+                    </div>
+                    <div class="howto-warn">No food means hunger, low energy and a failed mission.</div>
+                </div>
+
+                <div class="howto-row radiation">
+                    <div class="howto-icon">☢️</div>
+                    <div class="howto-main">
+                        <h3>RADIATION</h3>
+                        <p>Keep it LOW. Protect your crew from solar storms.</p>
+                    </div>
+                    <div class="howto-warn">High radiation harms your crew. At 100% the mission fails.</div>
+                </div>
+
+                <div class="howto-row goal">
+                    <div class="howto-icon">🚀</div>
+                    <div class="howto-main">
+                        <h3>GOAL</h3>
+                        <p>Survive all 3 levels: Easy, Medium and Hard.</p>
+                    </div>
+                    <div class="howto-warn">Each level has 10 days, with 2 decisions every day. Every choice has a price!</div>
+                </div>
+            </div>
+
+            <button id="ok-btn" class="howto-btn">Got it!</button>
+        </div>
+    </div>
+
+    <!-- ===== شاشة اللعبة ===== -->
+    <div id="game-screen" class="screen">
+
+        <!-- الشريط العلوي -->
+        <header class="top-bar">
+            <div class="day-box"><span id="level-name">EASY</span> | Day <span id="day-count">1</span>/10</div>
+            <div class="nasa-logo">NASA</div>
+            <div class="crew-box">
+                <span class="crew-label">Crew</span>
+                <div id="crew-icons" class="crew-icons">
+                    <span class="crew-member">🧑‍🚀</span>
+                    <span class="crew-member">🧑‍🚀</span>
+                    <span class="crew-member">🧑‍🚀</span>
+                    <span class="crew-member">🧑‍🚀</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- لوحة الموارد -->
+        <aside class="resources-panel">
+            <div class="resource" data-resource="oxygen">
+                <div class="resource-info">
+                    <span class="resource-name">💨 Oxygen</span>
+                    <span class="resource-value" id="oxygen-value">80%</span>
+                </div>
+                <div class="bar"><div class="bar-fill oxygen" id="oxygen-bar"></div></div>
+            </div>
+
+            <div class="resource" data-resource="power">
+                <div class="resource-info">
+                    <span class="resource-name">⚡ Power</span>
+                    <span class="resource-value" id="power-value">65%</span>
+                </div>
+                <div class="bar"><div class="bar-fill power" id="power-bar"></div></div>
+            </div>
+
+            <div class="resource" data-resource="food">
+                <div class="resource-info">
+                    <span class="resource-name">🍎 Food</span>
+                    <span class="resource-value" id="food-value">70%</span>
+                </div>
+                <div class="bar"><div class="bar-fill food" id="food-bar"></div></div>
+            </div>
+
+            <div class="resource" data-resource="radiation">
+                <div class="resource-info">
+                    <span class="resource-name">☢️ Radiation</span>
+                    <span class="resource-value" id="radiation-value">20%</span>
+                </div>
+                <div class="bar"><div class="bar-fill radiation" id="radiation-bar"></div></div>
+            </div>
+        </aside>
+
+        <!-- كارت الحدث والاختيارات -->
+        <div id="event-modal" class="event-modal">
+            <div class="event-card">
+                <p id="question-count" class="question-count">Question 1/2</p>
+                <h2 id="event-title">⚠️ SOLAR STORM ALERT! ⚠️</h2>
+                <p id="event-desc">A solar storm is approaching. Choose how to respond.</p>
+                <div id="event-choices" class="event-choices">
+                    <!-- الأزرار بتتعمل من الـ JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- نافذة نتيجة القرار -->
+        <div id="result-modal" class="result-modal">
+            <div class="result-card">
+                <h3>✅ Decision Applied!</h3>
+                <p id="result-text"></p>
+                <div id="result-changes" class="result-changes"></div>
+                <button id="next-day-btn" class="next-btn">Next Day →</button>
+            </div>
+        </div>
+
+        <!-- زرار الرجوع للصفحة الرئيسية -->
+        <button id="home-btn" class="home-btn">🏠 Main Menu</button>
+    </div>
+
+    <!-- ===== شاشة الفشل ===== -->
+    <div id="fail-screen" class="screen end-screen fail">
+        <h2>MISSION FAILED!</h2>
+        <p id="fail-reason">The oxygen ran out!</p>
+        <button id="retry-btn" class="end-btn">Try Again</button>
+    </div>
+
+    <!-- ===== شاشة نهاية المستوى ===== -->
+    <div id="level-screen" class="screen end-screen level">
+        <h2 id="level-title">EASY LEVEL COMPLETE!</h2>
+        <p id="level-text">You survived 10 days.</p>
+        <div class="stats">
+            <div><span>Crew Alive</span><strong id="lvl-crew">4/4</strong></div>
+            <div><span>Levels Done</span><strong id="lvl-done">1/3</strong></div>
+        </div>
+        <button id="next-level-btn" class="end-btn">Start MEDIUM Level →</button>
+    </div>
+
+    <!-- ===== شاشة النجاح ===== -->
+    <div id="success-screen" class="screen end-screen success">
+        <h2>MISSION SUCCESSFUL!</h2>
+        <p id="success-text">You kept the crew alive for 30 days!</p>
+        <div class="stats">
+            <div><span>Total Days</span><strong id="stat-days">30/30</strong></div>
+            <div><span>Crew Alive</span><strong id="stat-crew">4/4</strong></div>
+            <div><span>Resources</span><strong id="stat-resources">Balanced</strong></div>
+        </div>
+        <button id="menu-btn" class="end-btn">Back to Menu</button>
+    </div>
+        <!-- زرار الصوت -->
+    <button id="sound-btn" class="sound-btn" title="Sound on/off">🔊</button>
+    <script src="script.js"></script>
+</body>
+
+</html>

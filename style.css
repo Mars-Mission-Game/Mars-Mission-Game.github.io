@@ -1,0 +1,886 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    /* يمنع أي سكرول نهائيًا */
+}
+
+img {
+    background-image: url("images/Home.png");
+    object-fit: cover;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    object-position: center;
+}
+
+/* =========================================
+    الصفحة الرئيسية
+   ========================================= */
+.Home-title {
+    position: absolute;
+    top: 22%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    font-size: 4rem;
+    text-align: center;
+    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.Welcome-message {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    color: #e0e0e0;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    margin-bottom: 25px;
+}
+
+#start-button {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+#how-button {
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    background-color: #1688D4;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 0 25px rgba(52, 211, 153, 0.8);
+}
+
+#start-button:hover {
+    box-shadow: 0 0 25px rgba(52, 211, 153, 0.8);
+    color: black;
+}
+
+#how-button:hover {
+    background: rgba(0, 212, 255, 0.4);
+    color: #ffffff;
+}
+
+/* =========================================
+    نافذة How To Play
+   ========================================= */
+.modal {
+    display: flex;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    justify-content: center;
+    align-items: center;
+
+    /* التحكم في الشفافية والظهور */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* يبدأ أصغر قليلاً لينفتح بمرونة */
+    transform: scale(0.7);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-content img {
+    width: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal.active .modal-content {
+    transform: scale(1);
+}
+
+.ok-btn {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 200px;
+    height: 40px;
+    background: linear-gradient(180deg, #00d4ff 0%, #0056b3 100%);
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    border: 2px solid #00d4ff;
+    border-radius: 20px;
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+    transition: all 0.2s ease;
+}
+
+.ok-btn:hover {
+    background: linear-gradient(180deg, #00f0ff 0%, #0077e6 100%);
+    box-shadow: 0 0 25px rgba(0, 212, 255, 0.9);
+    transform: translateX(-50%) scale(1.05);
+}
+
+/* =========================================
+    شاشات اللعبة (عامة)
+   ========================================= */
+.screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background:
+        linear-gradient(rgba(5, 8, 20, 0.55), rgba(5, 8, 20, 0.75)),
+        url("images/Home.png") center / cover no-repeat;
+    color: #fff;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* خلفية شاشة اللعبة (غيّر اسم الصورة لو مختلف) */
+#game-screen {
+    background:
+        linear-gradient(rgba(5, 8, 20, 0.35), rgba(5, 8, 20, 0.55)),
+        url("images/Game.jpg") center / cover no-repeat;
+}
+
+/* =========================================
+    الشريط العلوي
+   ========================================= */
+.top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), transparent);
+}
+
+.day-box,
+.crew-box {
+    background: rgba(20, 30, 50, 0.75);
+    border: 1px solid rgba(0, 212, 255, 0.4);
+    border-radius: 12px;
+    padding: 0.6rem 1.2rem;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 0 12px rgba(0, 212, 255, 0.25);
+}
+
+.day-box {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.day-box span {
+    font-family: 'Orbitron', sans-serif;
+}
+
+#level-name {
+    color: #22d3ee;
+}
+
+.nasa-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: #fff;
+    text-shadow: 0 0 10px #1688D4, 0 0 20px #1688D4;
+}
+
+.crew-box {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.crew-label {
+    font-size: 1rem;
+    opacity: 0.85;
+}
+
+.crew-icons {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.crew-member {
+    font-size: 1.4rem;
+    transition: all 0.4s ease;
+}
+
+.crew-member.dead {
+    opacity: 0.25;
+    filter: grayscale(1);
+}
+
+/* =========================================
+    لوحة الموارد
+   ========================================= */
+.resources-panel {
+    position: absolute;
+    top: 110px;
+    left: 2rem;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.resource {
+    background: rgba(20, 30, 50, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    backdrop-filter: blur(6px);
+}
+
+.resource-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.bar {
+    width: 100%;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 10px;
+    transition: width 0.6s ease, background 0.3s ease;
+}
+
+.bar-fill.oxygen    { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+.bar-fill.power     { background: linear-gradient(90deg, #eab308, #fde047); }
+.bar-fill.food      { background: linear-gradient(90deg, #16a34a, #4ade80); }
+.bar-fill.radiation { background: linear-gradient(90deg, #9333ea, #c084fc); }
+
+/* تحذير لما المورد يبقى في خطر (الـ JS بيضيف الكلاس ده) */
+.bar-fill.danger {
+    background: linear-gradient(90deg, #dc2626, #f87171);
+}
+
+/* =========================================
+    كارت الحدث
+   ========================================= */
+.event-modal,
+.result-modal {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.event-modal.active,
+.result-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.event-card,
+.result-card {
+    background: rgba(25, 30, 45, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+    transform: scale(0.8);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.event-card {
+    width: 560px;
+    max-width: 90%;
+}
+
+.event-modal.active .event-card,
+.result-modal.active .result-card {
+    transform: scale(1);
+}
+
+.event-card h2 {
+    color: #ef4444;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+}
+
+.event-card p {
+    opacity: 0.85;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+/* عداد الأسئلة (Question 1/2) */
+.event-card p.question-count {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    color: #22d3ee;
+    margin-bottom: 0.5rem;
+    opacity: 1;
+}
+
+.event-choices {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.choice-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 1rem;
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.choice-btn:hover {
+    transform: translateY(-4px) scale(1.04);
+}
+
+.choice-btn.shield { background: linear-gradient(135deg, #16a34a, #15803d); box-shadow: 0 0 14px rgba(34, 197, 94, 0.5); }
+.choice-btn.power  { background: linear-gradient(135deg, #2563eb, #1d4ed8); box-shadow: 0 0 14px rgba(59, 130, 246, 0.5); }
+.choice-btn.food   { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 0 14px rgba(251, 191, 36, 0.5); }
+
+/* =========================================
+    نافذة نتيجة القرار
+   ========================================= */
+.result-card {
+    width: 420px;
+    max-width: 90%;
+}
+
+.result-card h3 {
+    color: #4ade80;
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.result-card p {
+    opacity: 0.85;
+    margin-bottom: 1rem;
+}
+
+.result-changes {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.change-chip {
+    min-width: 90px;
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+}
+
+.change-chip.up   { color: #4ade80; border-color: #4ade80; }
+.change-chip.down { color: #f87171; border-color: #f87171; }
+
+.next-btn,
+.end-btn {
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.next-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+.next-btn:hover,
+.end-btn:hover {
+    transform: scale(1.06);
+}
+
+/* =========================================
+    زرار الرجوع للصفحة الرئيسية
+   ========================================= */
+.home-btn {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 2rem;
+    z-index: 10;
+    padding: 0.7rem 1.4rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(20, 30, 50, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.home-btn:hover {
+    background: rgba(220, 38, 38, 0.7);
+    transform: scale(1.06);
+}
+
+/* =========================================
+    شاشات النهاية (فشل / نهاية مستوى / نجاح)
+   ========================================= */
+.end-screen.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+}
+
+.end-screen h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3.5rem;
+}
+
+.end-screen p {
+    font-size: 1.3rem;
+    opacity: 0.9;
+}
+
+/* --- الفشل --- */
+.end-screen.fail {
+    background:
+        linear-gradient(rgba(40, 10, 5, 0.55), rgba(10, 5, 5, 0.75)),
+        url("images/Mission_Failed.jpg") center / cover no-repeat;
+}
+
+.end-screen.fail h2 {
+    color: #ef4444;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.7);
+}
+
+.fail .end-btn {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+    box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
+}
+
+/* --- نهاية المستوى --- */
+.end-screen.level {
+    background:
+        linear-gradient(rgba(5, 15, 25, 0.5), rgba(5, 10, 20, 0.7)),
+        url("images/Home.png") center / cover no-repeat;
+}
+
+.end-screen.level h2 {
+    color: #22d3ee;
+    text-shadow: 0 0 20px rgba(34, 211, 238, 0.7);
+}
+
+.level .end-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+/* --- النجاح --- */
+.end-screen.success {
+    background:
+        linear-gradient(rgba(5, 20, 10, 0.45), rgba(5, 10, 10, 0.65)),
+        url("images/Mission_Completed.jpg") center / cover no-repeat;
+}
+
+.end-screen.success h2 {
+    color: #4ade80;
+    text-shadow: 0 0 20px rgba(74, 222, 128, 0.7);
+}
+
+.success .end-btn {
+    background: linear-gradient(135deg, #475569, #1e293b);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* --- صندوق الإحصائيات --- */
+.stats {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem 2rem;
+    background: rgba(20, 30, 50, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+}
+
+.stats div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.stats span {
+    font-size: 0.9rem;
+    opacity: 0.75;
+}
+
+.stats strong {
+    font-size: 1.3rem;
+    color: #4ade80;
+}
+/* =========================================
+   نافذة How To Play (كود بدل الصورة)
+   ========================================= */
+.howto-card {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: min(900px, 94vw);
+    max-width: 94vw;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 1.8rem 2rem;
+    box-sizing: border-box;
+    color: #fff;
+    background:
+        radial-gradient(circle at top, rgba(0, 120, 255, 0.18), transparent 60%),
+        rgba(8, 18, 40, 0.96);
+    border: 2px solid #00d4ff;
+    border-radius: 22px;
+    box-shadow:
+        0 0 25px rgba(0, 212, 255, 0.55),
+        inset 0 0 25px rgba(0, 120, 255, 0.2);
+}
+
+.howto-kicker {
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 6px;
+    color: #22d3ee;
+}
+
+.howto-title {
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    margin: 0.2rem 0;
+    text-shadow: 0 0 18px rgba(0, 212, 255, 0.8);
+}
+
+.howto-sub {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #7dd3fc;
+    margin-bottom: 1.2rem;
+}
+
+.howto-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.howto-row {
+    --c: #00d4ff;
+    display: grid;
+    grid-template-columns: 64px 1fr 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--c);
+    border-radius: 14px;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--c) 35%, transparent);
+}
+
+.howto-row.oxygen    { --c: #22d3ee; }
+.howto-row.power     { --c: #facc15; }
+.howto-row.food      { --c: #4ade80; }
+.howto-row.radiation { --c: #c084fc; }
+.howto-row.goal      { --c: #fb7185; }
+
+.howto-icon {
+    width: 54px;
+    height: 54px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.7rem;
+    border: 2px solid var(--c);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--c) 15%, transparent);
+}
+
+.howto-main h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: var(--c);
+    margin-bottom: 0.15rem;
+}
+
+.howto-main p {
+    font-size: 0.98rem;
+    opacity: 0.92;
+}
+
+.howto-warn {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    padding: 0.6rem 0.8rem;
+    background: rgba(0, 0, 0, 0.35);
+    border-left: 3px solid var(--c);
+    border-radius: 8px;
+    opacity: 0.9;
+}
+
+.howto-btn {
+    align-self: center;
+    margin-top: 1.3rem;
+    width: 220px;
+    height: 56px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(180deg, #00d4ff 0%, #0056b3 100%);
+    border: 2px solid #00d4ff;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.howto-btn:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 25px rgba(0, 212, 255, 0.9);
+}
+
+/* الموبايل: الصف يبقى عمود بدل 3 أعمدة */
+@media (max-width: 700px) {
+    .howto-card { padding: 1.2rem 1rem; }
+    .howto-title { font-size: 2rem; }
+    .howto-row { grid-template-columns: 54px 1fr; }
+    .howto-warn { grid-column: 1 / -1; }
+}
+
+/* =========================================
+   تأثيرات وأنيميشن
+   ========================================= */
+html { background: #000; }
+
+/* ظهور الشاشات */
+.screen.active { animation: screenIn 0.5s ease; }
+@keyframes screenIn {
+    from { opacity: 0; transform: scale(1.03); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* الصفحة الرئيسية */
+.Home-title { animation: titleFloat 4s ease-in-out infinite; }
+@keyframes titleFloat {
+    0%, 100% { transform: translate(-50%, -50%); text-shadow: 0 0 8px rgba(255, 255, 255, 0.6); }
+    50%      { transform: translate(-50%, calc(-50% - 8px)); text-shadow: 0 0 24px rgba(255, 255, 255, 0.95); }
+}
+
+#start-button,
+#how-button { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+
+#start-button:not(:hover) { animation: btnPulse 2s ease-in-out infinite; }
+@keyframes btnPulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
+    50%      { box-shadow: 0 0 34px rgba(16, 185, 129, 0.95); }
+}
+
+#start-button:hover,
+#how-button:hover { transform: translate(-50%, -50%) scale(1.07); }
+
+/* غبار المريخ المتحرك في شاشة اللعبة */
+#game-screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.6;
+    background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(255, 200, 150, 0.8), transparent),
+        radial-gradient(1.5px 1.5px at 90px 120px, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(2px 2px at 160px 60px, rgba(255, 160, 100, 0.7), transparent);
+    background-size: 200px 200px;
+    animation: dustDrift 18s linear infinite;
+}
+@keyframes dustDrift {
+    from { background-position: 0 0; }
+    to   { background-position: -400px 200px; }
+}
+
+/* وميض الموارد لما تتغير */
+.resource.pulse-up   { animation: pulseUp 0.8s ease; }
+.resource.pulse-down { animation: pulseDown 0.8s ease; }
+@keyframes pulseUp {
+    40% { box-shadow: 0 0 24px rgba(74, 222, 128, 0.9); border-color: #4ade80; }
+}
+@keyframes pulseDown {
+    40% { box-shadow: 0 0 24px rgba(248, 113, 113, 0.9); border-color: #f87171; }
+}
+
+/* الشريط الأحمر في الخطر بينبض */
+.bar-fill.danger { animation: dangerPulse 1s ease-in-out infinite; }
+@keyframes dangerPulse { 50% { filter: brightness(1.6); } }
+
+/* عنوان الحدث بيلمع */
+.event-card h2 { animation: titleGlow 1.4s ease-in-out infinite alternate; }
+@keyframes titleGlow {
+    from { text-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
+    to   { text-shadow: 0 0 22px rgba(239, 68, 68, 0.95); }
+}
+
+/* الاختيارات والنتائج بتظهر واحد ورا التاني */
+.choice-btn { animation: choiceIn 0.45s backwards; }
+.choice-btn:nth-child(2) { animation-delay: 0.1s; }
+.choice-btn:nth-child(3) { animation-delay: 0.2s; }
+@keyframes choiceIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.change-chip { animation: chipPop 0.4s backwards; }
+.change-chip:nth-child(2) { animation-delay: 0.1s; }
+.change-chip:nth-child(3) { animation-delay: 0.2s; }
+.change-chip:nth-child(4) { animation-delay: 0.3s; }
+@keyframes chipPop {
+    from { opacity: 0; transform: scale(0.5); }
+    60%  { transform: scale(1.15); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* اهتزاز الشاشة ووميضها */
+body.shake { animation: shake 0.5s; }
+@keyframes shake {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-8px, 3px); }
+    40% { transform: translate(7px, -4px); }
+    60% { transform: translate(-5px, 2px); }
+    80% { transform: translate(4px, -2px); }
+}
+
+.fx-flash {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+    pointer-events: none;
+    animation: flashFade 0.7s ease-out forwards;
+}
+@keyframes flashFade { from { opacity: 1; } to { opacity: 0; } }
+
+/* قصاصات الاحتفال */
+.confetti {
+    position: fixed;
+    top: -20px;
+    width: 10px;
+    height: 16px;
+    border-radius: 2px;
+    z-index: 1500;
+    pointer-events: none;
+    animation: confettiFall linear forwards;
+}
+@keyframes confettiFall {
+    to { transform: translateY(110vh) rotate(720deg); }
+}
+
+/* زرار الصوت */
+.sound-btn {
+    position: fixed;
+    right: 1.2rem;
+    bottom: 1.2rem;
+    z-index: 2000;
+    width: 46px;
+    height: 46px;
+    font-size: 1.3rem;
+    color: #fff;
+    background: rgba(20, 30, 50, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: transform 0.2s ease;
+}
+.sound-btn:hover { transform: scale(1.12); }
+
+/* لو الجهاز مفعّل تقليل الحركة، نوقف الأنيميشن */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
