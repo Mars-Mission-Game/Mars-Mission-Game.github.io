@@ -316,9 +316,9 @@ const HARD_EVENTS = [
 // المستويات: كل مستوى له أسئلته الخاصة (events)
 // daily = الاستهلاك اليومي، good = ضرب المكاسب، bad = ضرب الخسائر
 const LEVELS = [
-    { name: 'EASY',   events: EASY_EVENTS,   daily: { oxygen: -6, power: -4, food: -5, radiation: -2 }, good: 1,   bad: 1 },
+    { name: 'EASY', events: EASY_EVENTS, daily: { oxygen: -6, power: -4, food: -5, radiation: -2 }, good: 1, bad: 1 },
     { name: 'MEDIUM', events: MEDIUM_EVENTS, daily: { oxygen: -7, power: -5, food: -6, radiation: -1 }, good: 0.9, bad: 1.2 },
-    { name: 'HARD',   events: HARD_EVENTS,   daily: { oxygen: -8, power: -6, food: -7, radiation: 0 },  good: 0.8, bad: 1.4 }
+    { name: 'HARD', events: HARD_EVENTS, daily: { oxygen: -8, power: -6, food: -7, radiation: 0 }, good: 0.8, bad: 1.4 }
 ];
 
 /* =========================================
@@ -587,7 +587,7 @@ nextLevelBtn.addEventListener('click', () => startLevel(state.level + 1));
 menuBtn.addEventListener('click', () => showScreen(null));
 
 homeBtn.addEventListener('click', () => {
-    if (!confirm('Return to the main menu? Your progress will be lost.')) return;
+    if (!confirm('Return to the main menu? Your progress is saved, so you can continue later.')) return;
 
     eventModal.classList.remove('active');
     resultModal.classList.remove('active');
@@ -599,7 +599,7 @@ homeBtn.addEventListener('click', () => {
    ========================================= */
 let audioCtx = null;
 let soundOn = true;
-try { soundOn = localStorage.getItem('mm-sound') !== 'off'; } catch (e) {}
+try { soundOn = localStorage.getItem('mm-sound') !== 'off'; } catch (e) { }
 
 function getCtx() {
     if (!audioCtx) {
@@ -631,15 +631,15 @@ function tone(freq, dur, { type = 'sine', vol = 0.15, delay = 0, to = null } = {
 
 const SFX = {
     click: () => tone(700, 0.07, { type: 'square', vol: 0.05 }),
-    good:  () => { tone(523, 0.12); tone(784, 0.2, { delay: 0.1 }); },
-    bad:   () => tone(300, 0.3, { type: 'sawtooth', vol: 0.1, to: 120 }),
+    good: () => { tone(523, 0.12); tone(784, 0.2, { delay: 0.1 }); },
+    bad: () => tone(300, 0.3, { type: 'sawtooth', vol: 0.1, to: 120 }),
     alert: () => {
         tone(880, 0.16, { type: 'square', vol: 0.06 });
         tone(660, 0.16, { type: 'square', vol: 0.06, delay: 0.2 });
     },
     level: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.25, { type: 'triangle', delay: i * 0.12 })),
-    win:   () => [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, 0.35, { type: 'triangle', vol: 0.18, delay: i * 0.14 })),
-    fail:  () => {
+    win: () => [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, 0.35, { type: 'triangle', vol: 0.18, delay: i * 0.14 })),
+    fail: () => {
         tone(220, 0.7, { type: 'sawtooth', vol: 0.12, to: 55 });
         tone(165, 0.9, { type: 'sawtooth', vol: 0.1, delay: 0.3, to: 40 });
     }
@@ -647,7 +647,7 @@ const SFX = {
 
 function playSound(name) {
     if (!soundOn) return;
-    try { SFX[name](); } catch (e) {}
+    try { SFX[name](); } catch (e) { }
 }
 
 // موسيقى فضاء هادية في الخلفية (طنين منخفض بيتموج)
@@ -733,7 +733,7 @@ updateSoundBtn();
 
 soundBtn.addEventListener('click', () => {
     soundOn = !soundOn;
-    try { localStorage.setItem('mm-sound', soundOn ? 'on' : 'off'); } catch (e) {}
+    try { localStorage.setItem('mm-sound', soundOn ? 'on' : 'off'); } catch (e) { }
     updateSoundBtn();
     if (!soundOn) stopAmbient();
     else if (gameScreen.classList.contains('active')) startAmbient();
@@ -830,3 +830,124 @@ render = function () {
         oxygen: state.oxygen, power: state.power, food: state.food, radiation: state.radiation
     };
 };
+
+/* =========================================
+   حفظ التقدم (Continue)
+   ========================================= */
+const SAVE_KEY = 'mm-save-v1';
+const continueBtn = document.getElementById('continue-button');
+
+function saveProgress() {
+    if (!state) return;
+    try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify({
+            level: state.level, day: state.day, q: state.q, crew: state.crew,
+            oxygen: state.oxygen, power: state.power, food: state.food, radiation: state.radiation
+        }));
+    } catch (e) { }
+}
+
+function clearProgress() {
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) { }
+}
+
+// بيقرا التقدم المحفوظ ويتأكد إن البيانات سليمة
+function loadProgress() {
+    try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return null;
+        const s = JSON.parse(raw);
+        const inRange = (v, min, max) => Number.isInteger(v) && v >= min && v <= max;
+        const valid =
+            inRange(s.level, 0, LEVELS.length - 1) &&
+            inRange(s.day, 1, DAYS_PER_LEVEL) &&
+            inRange(s.q, 1, EVENTS_PER_DAY) &&
+            inRange(s.crew, 1, 4) &&
+            ['oxygen', 'power', 'food', 'radiation'].every(k => inRange(s[k], 0, 100));
+        return valid ? s : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+// بيظهر زرار Continue، والمستوى واليوم بيظهروا كتلميح لما تقف عليه بالماوس
+function refreshContinue() {
+    const s = loadProgress();
+    document.body.classList.toggle('has-save', !!s);
+    if (s) {
+        continueBtn.title = `${LEVELS[s.level].name} · Day ${s.day}`;
+    }
+}
+
+function continueGame() {
+    const s = loadProgress();
+    if (!s) {
+        refreshContinue();
+        return;
+    }
+    state = { ...s };
+    eventPool = [];
+    eventModal.classList.remove('active');
+    resultModal.classList.remove('active');
+    render();
+    showScreen(gameScreen);
+    showEvent();
+}
+
+continueBtn.addEventListener('click', continueGame);
+
+// لو فيه تقدم محفوظ، نسأل قبل ما نبدأ لعبة جديدة تمسحه
+startBtn.addEventListener('click', (e) => {
+    if (loadProgress() && !confirm('Start a new game? Your saved progress will be replaced.')) {
+        e.stopImmediatePropagation();
+    }
+}, true);
+
+/* ---------- ربط الحفظ بدوال اللعبة ---------- */
+
+// بنحفظ في بداية كل سؤال
+const _showEventSave = showEvent;
+showEvent = function () {
+    saveProgress();
+    _showEventSave();
+};
+
+// الفشل أو الفوز: نمسح الحفظ
+const _failGameSave = failGame;
+failGame = function (reason) {
+    clearProgress();
+    _failGameSave(reason);
+};
+
+const _winGameSave = winGame;
+winGame = function () {
+    clearProgress();
+    _winGameSave();
+};
+
+// نهاية مستوى: نحفظ بداية المستوى الجاي (بنفس تعويض الموارد في startLevel)
+const _finishLevelSave = finishLevel;
+finishLevel = function () {
+    _finishLevelSave();
+    if (levelScreen.classList.contains('active')) {
+        try {
+            localStorage.setItem(SAVE_KEY, JSON.stringify({
+                level: state.level + 1, day: 1, q: 1, crew: state.crew,
+                oxygen: Math.max(state.oxygen, 60),
+                power: Math.max(state.power, 60),
+                food: Math.max(state.food, 60),
+                radiation: Math.min(state.radiation, 30)
+            }));
+        } catch (e) { }
+    }
+};
+
+// لما اللاعب يرجع للقائمة الرئيسية، نحدّث زرار Continue
+const _showScreenSave = showScreen;
+showScreen = function (screen) {
+    _showScreenSave(screen);
+    if (screen === null) refreshContinue();
+};
+
+// عند فتح الصفحة
+refreshContinue();
