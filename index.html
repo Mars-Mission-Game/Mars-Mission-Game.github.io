@@ -6,10 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#05070f">
     <title>Mars Mission - لعبة رحلة المريخ الحماسية اونلاين</title>
-    <meta name="description" content="العِب الآن لعبة Mars Mission الحماسية مجاناً على المتصفح. اختبر مهاراتك في البقاء على قنديل المريخ وادعم المطور!">
+    <meta name="description"
+        content="العِب الآن لعبة Mars Mission الحماسية مجاناً على المتصفح. اختبر مهاراتك في البقاء على قنديل المريخ وادعم المطور!">
     <meta name="keywords" content="Mars Mission, العاب ويب, لعبة المريخ, العاب متصفح, العاب عربية">
     <link rel="icon" type="image/png" href="images/Title.png">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -35,7 +37,8 @@
                         <h3>OXYGEN</h3>
                         <p>Keep enough oxygen for your crew.</p>
                     </div>
-                    <div class="howto-warn">If oxygen runs out, your crew will suffocate and the mission will fail.</div>
+                    <div class="howto-warn">If oxygen runs out, your crew will suffocate and the mission will fail.
+                    </div>
                 </div>
 
                 <div class="howto-row power">
@@ -71,7 +74,8 @@
                         <h3>GOAL</h3>
                         <p>Survive all 3 levels: Easy, Medium and Hard.</p>
                     </div>
-                    <div class="howto-warn">Each level has 10 days, with 2 decisions every day. Every choice has a price!</div>
+                    <div class="howto-warn">Each level has 10 days, with 2 decisions every day. Every choice has a
+                        price!</div>
                 </div>
             </div>
 
@@ -83,6 +87,10 @@
     <div id="game-screen" class="screen">
 
         <!-- الشريط العلوي -->
+        <div id="mission-objective-banner" class="objective-banner">
+            <span class="obj-tag">PRIMARY OBJECTIVE</span>
+            <span id="objective-text">Maintain Base Life Support & Shield Crew</span>
+        </div>
         <header class="top-bar">
             <div class="day-box"><span id="level-name">EASY</span> | Day <span id="day-count">1</span>/10</div>
             <div class="nasa-logo">NASA</div>
@@ -104,7 +112,9 @@
                     <span class="resource-name">💨 Oxygen</span>
                     <span class="resource-value" id="oxygen-value">80%</span>
                 </div>
-                <div class="bar"><div class="bar-fill oxygen" id="oxygen-bar"></div></div>
+                <div class="bar">
+                    <div class="bar-fill oxygen" id="oxygen-bar"></div>
+                </div>
             </div>
 
             <div class="resource" data-resource="power">
@@ -112,7 +122,9 @@
                     <span class="resource-name">⚡ Power</span>
                     <span class="resource-value" id="power-value">65%</span>
                 </div>
-                <div class="bar"><div class="bar-fill power" id="power-bar"></div></div>
+                <div class="bar">
+                    <div class="bar-fill power" id="power-bar"></div>
+                </div>
             </div>
 
             <div class="resource" data-resource="food">
@@ -120,7 +132,9 @@
                     <span class="resource-name">🍎 Food</span>
                     <span class="resource-value" id="food-value">70%</span>
                 </div>
-                <div class="bar"><div class="bar-fill food" id="food-bar"></div></div>
+                <div class="bar">
+                    <div class="bar-fill food" id="food-bar"></div>
+                </div>
             </div>
 
             <div class="resource" data-resource="radiation">
@@ -128,7 +142,9 @@
                     <span class="resource-name">☢️ Radiation</span>
                     <span class="resource-value" id="radiation-value">20%</span>
                 </div>
-                <div class="bar"><div class="bar-fill radiation" id="radiation-bar"></div></div>
+                <div class="bar">
+                    <div class="bar-fill radiation" id="radiation-bar"></div>
+                </div>
             </div>
         </aside>
 
