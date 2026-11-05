@@ -1516,3 +1516,324 @@ body.has-save #how-button {
         overflow: hidden;
     }
 }
+
+/* =========================================
+   مؤثرات الحالة والطقس
+   ========================================= */
+.fx-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.fx {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+}
+
+/* لون عام حسب المستوى */
+#game-screen[data-level="1"] .fx-tone {
+    opacity: 1;
+    background: rgba(120, 50, 0, 0.14);
+}
+
+#game-screen[data-level="2"] .fx-tone {
+    opacity: 1;
+    background: rgba(70, 0, 0, 0.26);
+}
+
+/* حالة الخطر والتحذير */
+.fx-vignette {
+    box-shadow: inset 0 0 140px 30px var(--vig, transparent);
+}
+
+#game-screen.mood-warn .fx-vignette {
+    --vig: rgba(255, 160, 0, 0.4);
+    opacity: 1;
+}
+
+#game-screen.mood-danger .fx-vignette {
+    --vig: rgba(230, 0, 0, 0.85);
+    opacity: 1;
+    animation: alarmPulse 1.2s ease-in-out infinite;
+}
+
+#game-screen.mood-warn .fx-tint {
+    opacity: 1;
+    background: rgba(255, 140, 0, 0.07);
+}
+
+#game-screen.mood-danger .fx-tint {
+    opacity: 1;
+    background: rgba(255, 0, 0, 0.14);
+}
+
+@keyframes alarmPulse {
+
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* شريط الهدف بيتلوّن حسب الحالة */
+#game-screen.mood-warn .objective-banner {
+    border-color: rgba(255, 170, 0, 0.9);
+    box-shadow: 0 0 18px rgba(255, 170, 0, 0.45);
+}
+
+#game-screen.mood-danger .objective-banner {
+    border-color: rgba(239, 68, 68, 0.95);
+    box-shadow: 0 0 22px rgba(239, 68, 68, 0.65);
+}
+
+#game-screen.mood-danger .obj-tag {
+    color: #fecaca;
+    background: rgba(239, 68, 68, 0.35);
+}
+
+/* الطاقة قليلة: الإضاءة بتفصل */
+.fx-flicker {
+    background: #000;
+}
+
+#game-screen.low-power .fx-flicker {
+    animation: lightFlicker 3s linear infinite;
+}
+
+@keyframes lightFlicker {
+
+    0%,
+    100% {
+        opacity: 0.18;
+    }
+
+    6% {
+        opacity: 0.55;
+    }
+
+    8% {
+        opacity: 0.12;
+    }
+
+    40% {
+        opacity: 0.3;
+    }
+
+    44% {
+        opacity: 0.62;
+    }
+
+    46% {
+        opacity: 0.2;
+    }
+
+    70% {
+        opacity: 0.28;
+    }
+}
+
+/* الأكسجين قليل: نفس تقيل */
+.fx-oxy {
+    box-shadow: inset 0 0 220px 90px rgba(0, 15, 50, 0.9);
+}
+
+#game-screen.low-oxygen .fx-oxy {
+    animation: breathe 4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+
+    0%,
+    100% {
+        opacity: 0.25;
+    }
+
+    50% {
+        opacity: 0.85;
+    }
+}
+
+/* الإشعاع عالي: خطوط وتشويش */
+.fx-rad {
+    background: repeating-linear-gradient(0deg, rgba(170, 90, 255, 0.09) 0 2px, transparent 2px 6px);
+}
+
+#game-screen.high-rad .fx-rad {
+    animation: radScan 1.4s linear infinite, radGlitch 3s steps(1) infinite;
+}
+
+@keyframes radScan {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 0 24px;
+    }
+}
+
+@keyframes radGlitch {
+
+    0%,
+    100% {
+        opacity: 0.8;
+        transform: none;
+    }
+
+    92% {
+        opacity: 1;
+        transform: translateX(6px);
+    }
+
+    94% {
+        opacity: 0.4;
+        transform: translateX(-8px);
+    }
+
+    96% {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* عاصفة رملية */
+.fx-sand {
+    background:
+        linear-gradient(90deg, rgba(210, 120, 50, 0.35), rgba(160, 80, 30, 0.55)),
+        radial-gradient(3px 3px at 30px 40px, rgba(255, 220, 170, 0.9), transparent),
+        radial-gradient(2px 2px at 110px 90px, rgba(255, 200, 140, 0.8), transparent),
+        radial-gradient(4px 4px at 200px 20px, rgba(255, 230, 190, 0.7), transparent);
+    background-size: 100% 100%, 240px 160px, 180px 120px, 300px 200px;
+}
+
+.fx-sand::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: repeating-linear-gradient(100deg, transparent 0 40px, rgba(255, 200, 140, 0.13) 40px 90px);
+}
+
+#game-screen.weather-sand .fx-sand {
+    opacity: 0.85;
+    animation: sandBlow 1.2s linear infinite;
+}
+
+#game-screen.weather-sand .fx-sand::before {
+    animation: sandStreak 2.5s linear infinite;
+}
+
+@keyframes sandBlow {
+    from {
+        background-position: 0 0, 0 0, 0 0, 0 0;
+    }
+
+    to {
+        background-position: 0 0, -480px 60px, -360px 40px, -600px 80px;
+    }
+}
+
+@keyframes sandStreak {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-90px);
+    }
+}
+
+/* إشعاع شمسي */
+.fx-solar {
+    background: radial-gradient(ellipse at 85% -10%, rgba(255, 235, 130, 0.85), rgba(255, 140, 0, 0.35) 40%, transparent 70%);
+}
+
+#game-screen.weather-solar .fx-solar {
+    animation: solarPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes solarPulse {
+    from {
+        opacity: 0.35;
+    }
+
+    to {
+        opacity: 0.95;
+    }
+}
+
+/* نيازك */
+.fx-meteors::before,
+.fx-meteors::after {
+    content: "";
+    position: absolute;
+    top: -150px;
+    width: 3px;
+    height: 140px;
+    border-radius: 3px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 200, 120, 0.95));
+    transform: rotate(25deg);
+    opacity: 0;
+}
+
+.fx-meteors::before {
+    left: 70%;
+}
+
+.fx-meteors::after {
+    left: 40%;
+}
+
+#game-screen.weather-meteor .fx-meteors {
+    opacity: 1;
+}
+
+#game-screen.weather-meteor .fx-meteors::before {
+    animation: meteor 1.6s linear infinite;
+}
+
+#game-screen.weather-meteor .fx-meteors::after {
+    animation: meteor 2.1s linear 0.8s infinite;
+}
+
+@keyframes meteor {
+    from {
+        transform: translate(0, 0) rotate(25deg);
+        opacity: 1;
+    }
+
+    to {
+        transform: translate(-420px, 110vh) rotate(25deg);
+        opacity: 0;
+    }
+}
+
+/* حريق */
+.fx-fire {
+    transform-origin: bottom;
+    background: radial-gradient(ellipse at 50% 115%, rgba(255, 110, 0, 0.85), rgba(255, 60, 0, 0.3) 45%, transparent 70%);
+}
+
+#game-screen.weather-fire .fx-fire {
+    animation: fireFlicker 0.6s steps(3) infinite alternate;
+}
+
+@keyframes fireFlicker {
+    from {
+        opacity: 0.5;
+        transform: scaleY(1);
+    }
+
+    to {
+        opacity: 0.95;
+        transform: scaleY(1.08);
+    }
+}
