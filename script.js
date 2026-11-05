@@ -951,3 +951,92 @@ showScreen = function (screen) {
 
 // عند فتح الصفحة
 refreshContinue();
+
+/* =========================================
+   مؤثرات الحالة والطقس
+   ========================================= */
+// طبقات التأثيرات (بتتحط ورا الواجهة)
+gameScreen.insertAdjacentHTML('afterbegin', `
+    <div class="fx-layer" aria-hidden="true">
+        <div class="fx fx-tone"></div>
+        <div class="fx fx-tint"></div>
+        <div class="fx fx-oxy"></div>
+        <div class="fx fx-flicker"></div>
+        <div class="fx fx-rad"></div>
+        <div class="fx fx-sand"></div>
+        <div class="fx fx-solar"></div>
+        <div class="fx fx-meteors"></div>
+        <div class="fx fx-fire"></div>
+        <div class="fx fx-vignette"></div>
+    </div>
+`);
+
+const WEATHER_CLASSES = ['weather-sand', 'weather-solar', 'weather-meteor', 'weather-fire'];
+const objectiveEl = document.getElementById('objective-text');
+const DEFAULT_OBJECTIVE = objectiveEl ? objectiveEl.textContent : '';
+
+// بيحدد نوع الطقس من عنوان الحدث
+function weatherFor(title) {
+    if (/DUST STORM/.test(title)) return 'sand';
+    if (/SOLAR|FLARE|RADIATION/.test(title)) return 'solar';
+    if (/METEOR|HULL BREACH/.test(title)) return 'meteor';
+    if (/FIRE|EXPLOSION/.test(title)) return 'fire';
+    return '';
+}
+
+function setWeather(title) {
+    gameScreen.classList.remove(...WEATHER_CLASSES);
+    const w = weatherFor(title || '');
+    if (w) gameScreen.classList.add('weather-' + w);
+}
+
+// بيحدّث حالة الشاشة وشريط الهدف حسب الموارد
+function updateMood() {
+    if (!state) return;
+
+    const critical = [];
+    if (state.oxygen <= 25) critical.push('Oxygen');
+    if (state.power <= 25) critical.push('Power');
+    if (state.food <= 25) critical.push('Food');
+    if (state.radiation >= 70) critical.push('Radiation');
+
+    const warning = [];
+    if (state.oxygen <= 40) warning.push('Oxygen');
+    if (state.power <= 40) warning.push('Power');
+    if (state.food <= 40) warning.push('Food');
+    if (state.radiation >= 55) warning.push('Radiation');
+
+    const mood = critical.length ? 'mood-danger' : warning.length ? 'mood-warn' : 'mood-calm';
+    gameScreen.classList.remove('mood-calm', 'mood-warn', 'mood-danger');
+    gameScreen.classList.add(mood);
+
+    gameScreen.classList.toggle('low-power', state.power <= 30);
+    gameScreen.classList.toggle('low-oxygen', state.oxygen <= 30);
+    gameScreen.classList.toggle('high-rad', state.radiation >= 60);
+    gameScreen.dataset.level = state.level;
+
+    if (objectiveEl) {
+        if (critical.length) objectiveEl.textContent = `CRITICAL: ${critical.join(' & ')}!`;
+        else if (warning.length) objectiveEl.textContent = `Warning: watch ${warning.join(' & ')}`;
+        else objectiveEl.textContent = DEFAULT_OBJECTIVE;
+    }
+}
+
+// ربط المؤثرات بدوال اللعبة
+const _renderFx = render;
+render = function () {
+    _renderFx();
+    updateMood();
+};
+
+const _showEventFx = showEvent;
+showEvent = function () {
+    _showEventFx();
+    setWeather(lastEvent && lastEvent.title);
+};
+
+const _showScreenFx = showScreen;
+showScreen = function (screen) {
+    _showScreenFx(screen);
+    if (screen !== gameScreen) setWeather('');
+};
