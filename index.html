@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#05070f">
-    <title>Mars Mission - لعبة رحلة المريخ الحماسية اونلاين</title>
+    <title>Mars Mission - NASA Space Apps Challenge</title>
     <meta name="description"
-        content="العِب الآن لعبة Mars Mission الحماسية مجاناً على المتصفح. اختبر مهاراتك في البقاء على قنديل المريخ وادعم المطور!">
-    <meta name="keywords" content="Mars Mission, العاب ويب, لعبة المريخ, العاب متصفح, العاب عربية">
+        content="Mars Mission is a survival strategy game made for the NASA Space Apps Challenge. Keep your crew alive for 30 days using real NASA science.">
+    <meta name="keywords" content="Mars Mission, NASA Space Apps Challenge, Mars game, space survival, browser game">
     <link rel="icon" type="image/png" href="images/Title.png">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto:wght@400;700&display=swap"
         rel="stylesheet">
@@ -22,6 +22,7 @@
     <button id="start-button">Start New Mission →</button>
     <button id="continue-button">Continue The last Mission →</button>
     <button id="how-button">How To play</button>
+    <button id="credits-button" class="credits-btn">🛰️ Data Sources</button>
 
     <!-- ===== نافذة How To Play ===== -->
     <div id="how-to-play-modal" class="modal">
@@ -75,7 +76,7 @@
                         <p>Survive all 3 levels: Easy, Medium and Hard.</p>
                     </div>
                     <div class="howto-warn">Each level has 10 days, with 2 decisions every day. Every choice has a
-                        price!</div>
+                        price! After each decision you will learn a real NASA fact.</div>
                 </div>
             </div>
 
@@ -83,9 +84,68 @@
         </div>
     </div>
 
+    <!-- ===== نافذة مصادر البيانات (Credits) ===== -->
+    <div id="credits-modal" class="modal">
+        <div class="modal-content howto-card">
+            <p class="howto-kicker">NASA SPACE APPS CHALLENGE</p>
+            <h2 class="howto-title">DATA SOURCES</h2>
+            <p class="howto-sub">The science in this game is inspired by real NASA and partner agency resources.</p>
+
+            <div class="howto-list">
+                <div class="howto-row radiation">
+                    <div class="howto-icon">☀️</div>
+                    <div class="howto-main">
+                        <h3><a href="https://ccmc.gsfc.nasa.gov/tools/DONKI/" target="_blank" rel="noopener noreferrer">NASA DONKI</a></h3>
+                        <p>Space Weather Database Of Notifications, Knowledge, Information.</p>
+                    </div>
+                    <div class="howto-warn">Used for LIVE solar flare data. A stronger real flare means more radiation
+                        in the solar storm event.</div>
+                </div>
+
+                <div class="howto-row oxygen">
+                    <div class="howto-icon">☢️</div>
+                    <div class="howto-main">
+                        <h3><a href="https://visualization.osdr.nasa.gov/radlab/" target="_blank" rel="noopener noreferrer">RadLab (OSDR)</a></h3>
+                        <p>Radiation Dosimetry Database from the International Space Station.</p>
+                    </div>
+                    <div class="howto-warn">Used for radiation facts and for how we think about shielding.</div>
+                </div>
+
+                <div class="howto-row food">
+                    <div class="howto-icon">🌱</div>
+                    <div class="howto-main">
+                        <h3><a href="https://www.asc-csa.gc.ca/eng/" target="_blank" rel="noopener noreferrer">CSA Food Production</a></h3>
+                        <p>Canadian Space Agency: food production on the Moon and in remote areas.</p>
+                    </div>
+                    <div class="howto-warn">Used for the greenhouse, harvest and food facts.</div>
+                </div>
+
+                <div class="howto-row power">
+                    <div class="howto-icon">🗺️</div>
+                    <div class="howto-main">
+                        <h3><a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener noreferrer">NASA Mars Trek</a></h3>
+                        <p>Real Mars surface imagery and terrain from NASA missions.</p>
+                    </div>
+                    <div class="howto-warn">Inspiration for the Mars surface events and rover facts.</div>
+                </div>
+
+                <div class="howto-row goal">
+                    <div class="howto-icon">🧬</div>
+                    <div class="howto-main">
+                        <h3><a href="https://api.nasa.gov/" target="_blank" rel="noopener noreferrer">NASA Open APIs</a> &amp; <a href="https://osdr.nasa.gov/" target="_blank" rel="noopener noreferrer">OSDR</a></h3>
+                        <p>NASA's public API portal and Open Science Data Repository.</p>
+                    </div>
+                    <div class="howto-warn">Used to fetch the live data and for the human health facts.</div>
+                </div>
+            </div>
+
+            <button id="credits-ok-btn" class="howto-btn">Close</button>
+        </div>
+    </div>
+
     <!-- ===== شاشة اللعبة ===== -->
     <div id="game-screen" class="screen">
-    
+
         <!-- الشريط العلوي -->
         <div id="mission-objective-banner" class="objective-banner">
             <span class="obj-tag">PRIMARY OBJECTIVE</span>
@@ -154,6 +214,7 @@
                 <p id="question-count" class="question-count">Question 1/2</p>
                 <h2 id="event-title">⚠️ SOLAR STORM ALERT! ⚠️</h2>
                 <p id="event-desc">A solar storm is approaching. Choose how to respond.</p>
+                <p id="live-data" class="live-data"></p>
                 <div id="event-choices" class="event-choices">
                     <!-- الأزرار بتتعمل من الـ JS -->
                 </div>
@@ -166,6 +227,11 @@
                 <h3>✅ Decision Applied!</h3>
                 <p id="result-text"></p>
                 <div id="result-changes" class="result-changes"></div>
+                <div id="nasa-fact" class="nasa-fact">
+                    <strong class="nasa-fact-title">🔬 NASA FACT</strong>
+                    <span id="nasa-fact-text" class="nasa-fact-text"></span>
+                    <em id="nasa-fact-src" class="nasa-fact-src"></em>
+                </div>
                 <button id="next-day-btn" class="next-btn">Next Day →</button>
             </div>
         </div>
