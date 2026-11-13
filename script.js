@@ -1,26 +1,39 @@
 /* =========================================
-   نافذة How To Play
+   نافذة How To Play + نافذة Data Sources
    ========================================= */
 const howBtn = document.getElementById('how-button');
 const modal = document.getElementById('how-to-play-modal');
 const okBtn = document.getElementById('ok-btn');
+
+const creditsBtn = document.getElementById('credits-button');
+const creditsModal = document.getElementById('credits-modal');
+const creditsOkBtn = document.getElementById('credits-ok-btn');
 
 howBtn.addEventListener('click', (e) => {
     e.preventDefault();
     modal.classList.add('active');
 });
 
+creditsBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    creditsModal.classList.add('active');
+});
+
 function closeModal() {
     modal.classList.remove('active');
 }
 
+function closeCredits() {
+    creditsModal.classList.remove('active');
+}
+
 okBtn.addEventListener('click', closeModal);
+creditsOkBtn.addEventListener('click', closeCredits);
 
 // إغلاق النافذة عند الضغط في أي مكان خارجي
 window.addEventListener('click', (event) => {
-    if (event.target === modal) {
-        closeModal();
-    }
+    if (event.target === modal) closeModal();
+    if (event.target === creditsModal) closeCredits();
 });
 
 /* =========================================
@@ -30,6 +43,9 @@ const DAYS_PER_LEVEL = 10;
 const EVENTS_PER_DAY = 2;
 const START_STATE = { oxygen: 80, power: 65, food: 70, radiation: 20 };
 const ICONS = { oxygen: '💨', power: '⚡', food: '🍎', radiation: '☢️' };
+
+// مفتاح ناسا: DEMO_KEY ليه حد استخدام قليل. اطلب مفتاح مجاني من https://api.nasa.gov وحطه هنا
+const NASA_API_KEY = 'DEMO_KEY';
 
 // ===== أسئلة المستوى السهل (10) =====
 const EASY_EVENTS = [
@@ -66,7 +82,7 @@ const EASY_EVENTS = [
         choices: [
             { label: 'Expand Greenhouse', type: 'food', text: 'More plants means more food and more oxygen.', effects: { food: 20, oxygen: 5, power: -10 } },
             { label: 'Eat Now', type: 'food', text: 'The crew is well fed today.', effects: { food: 15 } },
-            { label: 'Sell to Storage', type: 'power', text: 'Stored for later, and power use goes down.', effects: { food: 8, power: 8, oxygen: -3 } }
+            { label: 'Store for Later', type: 'power', text: 'Stored for later, and power use goes down.', effects: { food: 8, power: 8, oxygen: -3 } }
         ]
     },
     {
@@ -322,6 +338,140 @@ const LEVELS = [
 ];
 
 /* =========================================
+   معلومات ناسا الحقيقية (بتظهر بعد كل قرار)
+   الترتيب مهم: أول واحدة تطابق عنوان الحدث هي اللي بتظهر
+   ========================================= */
+const FACTS = [
+    {
+        test: /SOLAR|FLARE/,
+        text: 'Solar flares and coronal mass ejections are tracked by NASA in the DONKI database. Mars has no global magnetic field and only a thin atmosphere, so it gives little natural protection from them.',
+        src: 'NASA DONKI (Space Weather Database)'
+    },
+    {
+        test: /RADIATION/,
+        text: 'Radiation is one of the biggest risks of long missions. Dosimeters on the International Space Station measure the real dose astronauts receive, and Curiosity\'s RAD instrument measured roughly 0.67 mSv per day on the Martian surface.',
+        src: 'RadLab (OSDR) and NASA Curiosity RAD'
+    },
+    {
+        test: /TOXIC/,
+        text: 'Martian soil contains perchlorates, chemicals that are harmful to humans, so dust must be kept out of living areas.',
+        src: 'NASA Mars missions'
+    },
+    {
+        test: /DUST STORM/,
+        text: 'Dust storms can cover solar panels and block sunlight. In 2018 a planet-wide dust storm ended contact with NASA\'s solar-powered Opportunity rover.',
+        src: 'NASA Mars Exploration Program'
+    },
+    {
+        test: /METEOR|HULL/,
+        text: 'Spacecraft like the ISS use layered shields (called Whipple shields) to stop tiny meteoroids before they reach the main wall.',
+        src: 'NASA ISS safety'
+    },
+    {
+        test: /OXYGEN|AIR FILTER/,
+        text: 'The ISS makes oxygen by splitting water with electricity. On Mars, NASA\'s MOXIE experiment on Perseverance made oxygen from the carbon dioxide in the Martian air.',
+        src: 'NASA ISS and Perseverance MOXIE'
+    },
+    {
+        test: /GREENHOUSE|HARVEST|CROP|SOIL/,
+        text: 'Astronauts grew and ate red romaine lettuce on the ISS in 2015. The Canadian Space Agency also studies how to grow food on the Moon and in remote areas.',
+        src: 'NASA Veggie and CSA Food Production'
+    },
+    {
+        test: /MEDICAL/,
+        text: 'Spaceflight affects bone density, muscle mass, the immune system and sleep. NASA\'s Open Science Data Repository archives many studies on this.',
+        src: 'NASA OSDR'
+    },
+    {
+        test: /COMMS/,
+        text: 'Radio signals take roughly 3 to 22 minutes to travel between Earth and Mars. Communication also pauses when the Sun sits between the two planets.',
+        src: 'NASA Deep Space Network'
+    },
+    {
+        test: /MARSQUAKE/,
+        text: 'NASA\'s InSight lander detected many marsquakes. They helped scientists learn what the inside of Mars is made of.',
+        src: 'NASA InSight mission'
+    },
+    {
+        test: /FIRE/,
+        text: 'NASA\'s Saffire experiments burned materials in space to learn how fire behaves in microgravity, which helps make spacecraft safer.',
+        src: 'NASA Saffire experiments'
+    },
+    {
+        test: /FROZEN/,
+        text: 'Mars is very cold and temperatures fall far below freezing at night, so habitats, pipes and equipment need heating.',
+        src: 'NASA Mars missions'
+    },
+    {
+        test: /WATER/,
+        text: 'The ISS recycles much of its water, including water from the air and from urine, using its Water Recovery System.',
+        src: 'NASA ISS Environmental Control'
+    },
+    {
+        test: /BATTERY|POWER/,
+        text: 'Spacecraft depend on solar arrays and batteries. The ISS arrays charge its batteries so the station keeps power when it passes through Earth\'s shadow.',
+        src: 'NASA ISS Power System'
+    },
+    {
+        test: /ROVER/,
+        text: 'NASA\'s Curiosity and Perseverance rovers have driven across Mars for years. NASA Mars Trek lets you explore real terrain maps from these missions.',
+        src: 'NASA Mars Trek'
+    },
+    {
+        test: /SUPPLY/,
+        text: 'A trip to Mars takes many months, so a crew must carry or produce most of its supplies. Resupply from Earth is slow.',
+        src: 'NASA Mars mission planning'
+    },
+    {
+        test: /LIFE SUPPORT|MAINTENANCE|CALM/,
+        text: 'Astronauts spend a lot of their time on maintenance. Keeping life support running is a daily job on the ISS.',
+        src: 'NASA ISS operations'
+    }
+];
+
+const DEFAULT_FACT = {
+    text: 'Every system on a space base depends on the others, so astronauts must always balance air, power, food and safety.',
+    src: 'NASA human spaceflight'
+};
+
+function factFor(title) {
+    return FACTS.find(f => f.test.test(title)) || DEFAULT_FACT;
+}
+
+/* =========================================
+   بيانات ناسا الحية (DONKI)
+   بنجيب آخر توهج شمسي حقيقي. لو النت أو الـ API وقع، اللعبة بتكمل عادي
+   ========================================= */
+let liveFlare = null;
+let radBoost = 1;
+
+async function loadLiveFlare() {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 7000);
+    try {
+        const day = 864e5;
+        const end = new Date().toISOString().slice(0, 10);
+        const start = new Date(Date.now() - 60 * day).toISOString().slice(0, 10);
+        const url = `https://api.nasa.gov/DONKI/FLR?startDate=${start}&endDate=${end}&api_key=${NASA_API_KEY}`;
+        const res = await fetch(url, { signal: ctrl.signal });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (Array.isArray(data) && data.length) {
+            const valid = data
+                .filter(f => f && f.classType && f.beginTime)
+                .sort((a, b) => (a.beginTime < b.beginTime ? 1 : -1));
+            liveFlare = valid[0] || null;
+        }
+    } catch (e) {
+        liveFlare = null;
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+loadLiveFlare();
+
+/* =========================================
    العناصر
    ========================================= */
 const startBtn = document.getElementById('start-button');
@@ -347,6 +497,9 @@ const nextLevelBtn = document.getElementById('next-level-btn');
 const dayCount = document.getElementById('day-count');
 const levelName = document.getElementById('level-name');
 const crewMembers = document.querySelectorAll('#crew-icons .crew-member');
+const liveEl = document.getElementById('live-data');
+const factText = document.getElementById('nasa-fact-text');
+const factSrc = document.getElementById('nasa-fact-src');
 
 /* =========================================
    الحالة
@@ -382,10 +535,13 @@ function nextEvent() {
 }
 
 // بيزوّد صعوبة القرار حسب المستوى (المكاسب أقل والخسائر أكبر)
+// ولو فيه توهج شمسي حقيقي قوي، زيادة الإشعاع بتبقى أكبر (radBoost)
 function scaleDelta(res, delta) {
     const lvl = LEVELS[state.level];
     const good = res === 'radiation' ? delta < 0 : delta > 0;
-    return Math.round(delta * (good ? lvl.good : lvl.bad));
+    let value = delta * (good ? lvl.good : lvl.bad);
+    if (res === 'radiation' && delta > 0) value *= radBoost;
+    return Math.round(value);
 }
 
 function showScreen(screen) {
@@ -462,6 +618,11 @@ function chooseOption(choice) {
         chip.textContent = `${ICONS[res]} ${delta > 0 ? '+' : ''}${delta}`;
         resultChanges.appendChild(chip);
     });
+
+    // معلومة ناسا الخاصة بالحدث
+    const fact = factFor(lastEvent ? lastEvent.title : '');
+    factText.textContent = fact.text;
+    factSrc.textContent = 'Source: ' + fact.src;
 
     nextDayBtn.textContent = state.q < EVENTS_PER_DAY ? 'Next Question →' : 'Next Day →';
     render();
@@ -1039,4 +1200,34 @@ const _showScreenFx = showScreen;
 showScreen = function (screen) {
     _showScreenFx(screen);
     if (screen !== gameScreen) setWeather('');
+};
+
+/* =========================================
+   بيانات ناسا الحية في أحداث العواصف الشمسية
+   ========================================= */
+// بيعرض آخر توهج شمسي حقيقي، وبيحدد قوة الإشعاع الإضافية حسب فئته
+function updateLiveData(ev) {
+    radBoost = 1;
+    liveEl.classList.remove('show');
+    liveEl.textContent = '';
+
+    if (!ev || !/SOLAR|FLARE/.test(ev.title) || !liveFlare) return;
+
+    const cls = String(liveFlare.classType);
+    const letter = cls.charAt(0).toUpperCase();
+    radBoost = letter === 'X' ? 1.25 : letter === 'M' ? 1.1 : 1;
+
+    const date = String(liveFlare.beginTime).slice(0, 10);
+    let msg = `📡 LIVE NASA DATA (DONKI): the latest real solar flare was class ${cls} on ${date}.`;
+    if (radBoost > 1) {
+        msg += ` A strong flare means ${Math.round((radBoost - 1) * 100)}% more radiation damage in this event.`;
+    }
+    liveEl.textContent = msg;
+    liveEl.classList.add('show');
+}
+
+const _showEventLive = showEvent;
+showEvent = function () {
+    _showEventLive();
+    updateLiveData(lastEvent);
 };
