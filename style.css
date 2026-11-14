@@ -406,11 +406,11 @@ body>img {
     color: #22d3ee;
 }
 
-.nasa-logo {
+.game-logo {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     font-weight: 900;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     color: #fff;
     text-shadow: 0 0 10px #1688D4, 0 0 20px #1688D4;
 }
@@ -1136,9 +1136,9 @@ body.shake {
         padding: 0.4rem 0.7rem;
     }
 
-    .nasa-logo {
-        font-size: 0.95rem;
-        letter-spacing: 2px;
+    .game-logo {
+        font-size: 0.7rem;
+        letter-spacing: 1px;
     }
 
     .crew-box {
@@ -1283,9 +1283,9 @@ body.shake {
         padding: 0.3rem 0.7rem;
     }
 
-    .nasa-logo {
-        font-size: 1.1rem;
-        letter-spacing: 3px;
+    .game-logo {
+        font-size: 0.95rem;
+        letter-spacing: 2px;
     }
 
     .crew-box {
